@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # AI-Powered RFP Management System
 
 A single-user web application that streamlines the Request for Proposal (RFP) process using artificial intelligence.
