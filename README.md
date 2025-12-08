@@ -51,8 +51,10 @@ cd backend
 python -m venv venv
 
 # Activate virtual environment
+
 # Windows:
 venv\Scripts\activate
+
 # Linux/Mac:
 source venv/bin/activate
 
@@ -65,18 +67,18 @@ cp ../.env.example .env
 
 ### 3. Configure Environment Variables
 
-SECRET_KEY='your-secret-key'
-DEBUG=True
-EMAIL_HOST_USER='your-email@gmail.com'
-EMAIL_HOST_PASSWORD='your-app-password'
-OPENAI_API_KEY='your-openai-api-key'
-DEMO_MODE=True
-AI_DEMO_MODE=True
+- **SECRET_KEY**='your-secret-key'
+- **DEBUG**=True
+- **EMAIL_HOST_USER**='your-email@gmail.com'
+- **EMAIL_HOST_PASSWORD**='your-app-password'
+- **OPENAI_API_KEY**='your-openai-api-key'
+- **DEMO_MODE**=True
+- **AI_DEMO_MODE**=True
 
 ### 4. Database Setup
-python manage.py migrate
-python manage.py createsuperuser  # Optional for admin panel
-python setup_demo_data.py        # Load demo vendors and RFP
+1.python manage.py migrate 
+2.python manage.py createsuperuser  # Optional for admin panel
+3.python setup_demo_data.py        # Load demo vendors and RFP
 
 ### 5. Frontend Setup
 cd ../frontend
@@ -84,22 +86,21 @@ cd ../frontend
 
 ### 6. Run the Application
 
-# Terminal 1: Start Django backend
-cd backend
+cd backend  <br>
 python manage.py runserver
 
-### 📧 Email Configuration
-For Real Email Sending/Receiving:
--Use a Gmail account with 2FA enabled
--Generate an App Password from Google Account settings
-.Update .env with your credentials
--Set DEMO_MODE=False in .env
+## 📧 Email Configuration
+For Real Email Sending/Receiving: <br>
+-Use a Gmail account with 2FA enabled <br>
+-Generate an App Password from Google Account settings <br>
+.Update .env with your credentials <br>
+-Set DEMO_MODE=False in .env <br>
 
-### Demo Mode (Recommended for Testing):
-Set DEMO_MODE=True in .env
-System creates fake proposals automatically
-No actual emails sent/received
-Perfect for development and demonstration
+## Demo Mode (Recommended for Testing):
+Set DEMO_MODE=True in .env <br>
+System creates fake proposals automatically <br>
+No actual emails sent/received <br>
+Perfect for development and demonstration <br>
 
 
 
