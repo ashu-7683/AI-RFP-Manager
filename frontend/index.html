@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered RFP Management System</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <style>
+        /* Minimal styles to show buttons */
+        .list-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 1rem 0;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .list-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .action-icon {
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .action-icon:hover {
+            background: #2980b9;
+        }
+        
+        /* Ensure buttons are visible */
+        button {
+            visibility: visible !important;
+            display: inline-block !important;
+        }
+    </style>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-file-contract"></i>
+                <h1>AI RFP Manager</h1>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn active" data-page="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-page="create-rfp">
+                    <i class="fas fa-plus-circle"></i> Create RFP
+                </button>
+                <button class="nav-btn" data-page="vendors">
+                    <i class="fas fa-users"></i> Vendors
+                </button>
+                <button class="nav-btn" data-page="rfps">
+                    <i class="fas fa-list"></i> RFPs
+                </button>
+                <button class="nav-btn" data-page="proposals">
+                    <i class="fas fa-envelope"></i> Proposals
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #4CAF50;">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-rfps">0</h3>
+                            <p>Total RFPs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #2196F3;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-vendors">0</h3>
+                            <p>Vendors</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #FF9800;">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-proposals">0</h3>
+                            <p>Proposals</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #9C27B0;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="parsed-proposals">0</h3>
+                            <p>Parsed by AI</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-sections">
+                    <div class="section">
+                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="loadPage('create-rfp')">
+                                <i class="fas fa-plus"></i> Create New RFP
+                            </button>
+                            <button class="action-btn" onclick="loadPage('vendors')">
+                                <i class="fas fa-user-plus"></i> Add Vendor
+                            </button>
+                            <button class="action-btn" onclick="checkEmails()">
+                                <i class="fas fa-sync-alt"></i> Check Emails
+                            </button>
+                            <button class="action-btn" onclick="testEmailConfig()">
+                                <i class="fas fa-envelope"></i> Test Email
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3><i class="fas fa-clock"></i> Recent RFPs</h3>
+                        <div id="recent-rfps" class="recent-list">
+                            <!-- Will be populated by JavaScript -->
+                            <p class="empty-message">No RFPs yet. Create your first one!</p>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3><i class="fas fa-inbox"></i> Recent Proposals</h3>
+                        <div id="recent-proposals" class="recent-list">
+                            <!-- Will be populated by JavaScript -->
+                            <p class="empty-message">No proposals yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create RFP Page -->
+            <div id="create-rfp-page" class="page">
+                <h2><i class="fas fa-plus-circle"></i> Create New RFP</h2>
+                
+                <div class="rfp-creation-container">
+                    <div class="creation-tabs">
+                        <button class="tab-btn active" data-tab="chat-tab">
+                            <i class="fas fa-comment-dots"></i> Chat (AI)
+                        </button>
+                        <button class="tab-btn" data-tab="manual-tab">
+                            <i class="fas fa-edit"></i> Manual
+                        </button>
+                    </div>
+
+                    <!-- Chat Tab -->
+                    <div id="chat-tab" class="tab-content active">
+                        <div class="ai-chat-container">
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="message ai-message">
+                                    <div class="avatar">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="content">
+                                        <p>Hello! I'm your AI procurement assistant. Tell me what you need to purchase in plain English, and I'll create an RFP for you.</p>
+                                        <p class="example">Example: "I need 20 laptops with 16GB RAM and 15 monitors, budget $50,000, delivery in 30 days."</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-input">
+                                <textarea 
+                                    id="user-input" 
+                                    placeholder="Describe what you want to purchase..."
+                                    rows="3"
+                                ></textarea>
+                                <button onclick="processUserInput()" class="send-btn">
+                                    <i class="fas fa-paper-plane"></i> Create RFP
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="ai-preview" class="ai-preview hidden">
+                            <h3><i class="fas fa-eye"></i> AI-Parsed Preview</h3>
+                            <div id="preview-content" class="preview-content">
+                                <!-- AI parsed content will appear here -->
+                            </div>
+                            <div class="preview-actions">
+                                <button onclick="saveRFPAI()" class="primary-btn">
+                                    <i class="fas fa-save"></i> Save RFP
+                                </button>
+                                <button onclick="resetChat()" class="secondary-btn">
+                                    <i class="fas fa-redo"></i> Try Again
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manual Tab -->
+                    <div id="manual-tab" class="tab-content">
+                        <form id="manual-rfp-form" class="rfp-form">
+                            <div class="form-group">
+                                <label for="rfp-title">RFP Title</label>
+                                <input type="text" id="rfp-title" required placeholder="e.g., Office Equipment Purchase">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="rfp-description">Description</label>
+                                <textarea id="rfp-description" rows="4" required placeholder="Describe what you need to purchase..."></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="total-budget">Total Budget ($)</label>
+                                    <input type="number" id="total-budget" required min="0" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="delivery-days">Delivery Days</label>
+                                    <input type="number" id="delivery-days" required min="1" value="30">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="payment-terms">Payment Terms</label>
+                                    <input type="text" id="payment-terms" value="Net 30">
+                                </div>
+                                <div class="form-group">
+                                    <label for="warranty">Warranty</label>
+                                    <input type="text" id="warranty" value="1 year">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Requirements</label>
+                                <div id="requirements-container">
+                                    <div class="requirement-item">
+                                        <input type="text" class="requirement-input" placeholder="Add a requirement...">
+                                        <button type="button" class="remove-btn" onclick="removeRequirement(this)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="add-btn" onclick="addRequirement()">
+                                    <i class="fas fa-plus"></i> Add Requirement
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="rfp-deadline">Deadline</label>
+                                <input type="date" id="rfp-deadline" required>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn">
+                                    <i class="fas fa-save"></i> Save RFP
+                                </button>
+                                <button type="button" class="secondary-btn" onclick="resetManualForm()">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendors Page -->
+            <div id="vendors-page" class="page">
+                <div class="page-header">
+                    <h2><i class="fas fa-users"></i> Vendor Management</h2>
+                    <button class="primary-btn" onclick="showAddVendorModal()">
+                        <i class="fas fa-plus"></i> Add Vendor
+                    </button>
+                </div>
+                
+                <div class="vendor-list" id="vendor-list">
+                    <!-- Vendors will be loaded here -->
+                    <div class="loading">Loading vendors...</div>
+                </div>
+            </div>
+
+            <!-- RFPs Page -->
+            <div id="rfps-page" class="page">
+                <div class="page-header">
+                    <h2><i class="fas fa-file-alt"></i> RFPs</h2>
+                    <button class="primary-btn" onclick="loadPage('create-rfp')">
+                        <i class="fas fa-plus"></i> Create RFP
+                    </button>
+                </div>
+                
+                <div class="rfp-list" id="rfp-list">
+                    <!-- Static demo RFP card with buttons -->
+                    <div class="list-card" style="background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin: 1rem 0; border: 1px solid #e0e0e0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div style="font-weight: 600; color: #2c3e50; font-size: 1.1rem;">Demo: Office Equipment Purchase</div>
+                            <span style="background: #3498db; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem;">Draft</span>
+                        </div>
+                        <div style="color: #7f8c8d; margin-bottom: 1.5rem;">
+                            <p>Purchase laptops and monitors for new office - DEMO</p>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 1rem;">
+                                <p><i class="fas fa-dollar-sign"></i> Budget: $50000</p>
+                                <p><i class="fas fa-calendar-day"></i> Deadline: 12/19/2025</p>
+                                <p><i class="fas fa-truck"></i> Delivery: 30 days</p>
+                                <p><i class="fas fa-users"></i> Vendors: 2</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: #7f8c8d; font-size: 0.9rem;">Created: 12/5/2025</span>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <!-- Always show send button for demo -->
+                                <button onclick="sendRFPToVendors(1)" style="background: #3498db; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                                <button onclick="viewRFP(1)" style="background: #3498db; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="compareProposals(1)" style="background: #3498db; color: white; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-chart-bar"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Temporary debug section -->
+            <div style="margin: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                <h3><i class="fas fa-bug"></i> Debug Tools</h3>
+                <button onclick="debugLoadRFPs()" class="secondary-btn">
+                    <i class="fas fa-sync-alt"></i> Force Refresh RFPs
+                </button>
+                <button onclick="debugCreateTestRFP()" class="primary-btn">
+                    <i class="fas fa-plus"></i> Create Test RFP
+                </button>
+                <button onclick="debugCheckAllRFPs()" class="secondary-btn">
+                    <i class="fas fa-list"></i> Check RFP Status
+                </button>
+                <button onclick="testEmailConnection()" class="secondary-btn">
+                    <i class="fas fa-envelope"></i> Test Email Config
+                </button>
+            </div>
+
+            <!-- Proposals Page -->
+            <div id="proposals-page" class="page">
+                <div class="page-header">
+                    <h2><i class="fas fa-envelope"></i> Proposals</h2>
+                    <button class="primary-btn" onclick="checkEmails()">
+                        <i class="fas fa-sync-alt"></i> Check New Emails
+                    </button>
+                </div>
+                
+                <div class="proposal-filters">
+                    <select id="rfp-filter" onchange="loadProposals()">
+                        <option value="">All RFPs</option>
+                    </select>
+                    <select id="status-filter" onchange="loadProposals()">
+                        <option value="">All Status</option>
+                        <option value="parsed">Parsed</option>
+                        <option value="unparsed">Unparsed</option>
+                    </select>
+                </div>
+                
+                <div class="proposal-list" id="proposal-list">
+                    <!-- Proposals will be loaded here -->
+                    <div class="loading">Loading proposals...</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>AI-Powered RFP Management System &copy; 2024</p>
+            <div class="footer-links">
+                <button onclick="testEmailConfig()">
+                    <i class="fas fa-envelope"></i> Test Email
+                </button>
+                <button onclick="checkEmails()">
+                    <i class="fas fa-sync-alt"></i> Check Emails
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="vendor-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Add New Vendor</h3>
+                <button class="close-btn" onclick="closeModal('vendor-modal')">&times;</button>
+            </div>
+            <form id="vendor-form" class="modal-form">
+                <div class="form-group">
+                    <label for="vendor-name">Vendor Name *</label>
+                    <input type="text" id="vendor-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="vendor-email">Email *</label>
+                    <input type="email" id="vendor-email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vendor-contact">Contact Person</label>
+                        <input type="text" id="vendor-contact">
+                    </div>
+                    <div class="form-group">
+                        <label for="vendor-phone">Phone</label>
+                        <input type="tel" id="vendor-phone">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="vendor-category">Category</label>
+                    <select id="vendor-category">
+                        <option value="IT">IT Equipment</option>
+                        <option value="Office">Office Supplies</option>
+                        <option value="Services">Professional Services</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">Save Vendor</button>
+                    <button type="button" class="secondary-btn" onclick="closeModal('vendor-modal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="send-rfp-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-paper-plane"></i> Send RFP to Vendors</h3>
+                <button class="close-btn" onclick="closeModal('send-rfp-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Select vendors to send this RFP to:</p>
+                <div id="vendor-selector">
+                    <!-- Vendors will be populated here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button onclick="sendRFP()" class="primary-btn">
+                    <i class="fas fa-paper-plane"></i> Send RFP
+                </button>
+                <button onclick="closeModal('send-rfp-modal')" class="secondary-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="comparison-modal" class="modal wide-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Proposal Comparison</h3>
+                <button class="close-btn" onclick="closeModal('comparison-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="comparison-content">
+                    <!-- Comparison will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/main.js"></script>
+
+    <script>
+    // Debug script to check if JS is running
+    console.log('Debug: HTML loaded, checking JavaScript...');
+    
+    // Check if CSS is loaded
+    function checkCSSLoaded() {
+        const styleSheets = document.styleSheets;
+        console.log('Number of stylesheets:', styleSheets.length);
+        
+        for (let i = 0; i < styleSheets.length; i++) {
+            console.log('Stylesheet', i, ':', styleSheets[i].href);
+        }
+    }
+    
+    // Check if JS files are loaded
+    function checkJSLoaded() {
+        console.log('Checking JavaScript files...');
+        
+        // Check if functions exist
+        console.log('UIController exists:', typeof UIController !== 'undefined');
+        console.log('ApiService exists:', typeof ApiService !== 'undefined');
+        console.log('loadPage exists:', typeof loadPage !== 'undefined');
+    }
+    
+    // Run checks when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded');
+        checkCSSLoaded();
+        checkJSLoaded();
+        
+        // Force show buttons on existing RFP cards
+        setTimeout(function() {
+            const rfpList = document.getElementById('rfp-list');
+            if (rfpList) {
+                console.log('rfp-list content:', rfpList.innerHTML);
+            }
+        }, 1000);
+    });
+</script>
+</body>
+</html>

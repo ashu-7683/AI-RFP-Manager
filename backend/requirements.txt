@@ -1,0 +1,10 @@
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.2.0
+openai==0.28.0
+python-dotenv==1.0.0
+requests==2.31.0
+imapclient==3.0.1
+Pillow==10.1.0
+email-validator==2.1.0
+python-decouple==3.8
