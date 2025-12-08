@@ -15,33 +15,94 @@ A single-user web application that streamlines the Request for Proposal (RFP) pr
 ## Tech Stack
 
 ### Backend
-- **Framework**: Django 4.2.7
+- **Framework**: Django 5.2.8 
 - **API**: Django REST Framework
 - **Database**: SQLite3
 - **AI**: OpenAI GPT-3.5/4
 - **Email**: SMTP/IMAP (Gmail compatible)
+- **Authentication**: None (single-user system)
 
 ### Frontend
 - **HTML5**: Semantic markup
 - **CSS3**: Custom responsive design
 - **JavaScript**: Vanilla ES6 with modern APIs
 
+## Third-Party Services
+- **AI**: OpenAI API
+- **Email**: Gmail SMTP/IMAP
+- **Hosting**: Local development(port 8000)
+  
 ## Prerequisites
 
 - Python 3.8+
-- Node.js (for development tools)
 - OpenAI API key
 - Email account with SMTP/IMAP access (Gmail recommended)
 
 ## Installation
 
 ### 1. Clone the Repository
-```bash
+bash
 git clone <repository-url>
-cd rfp-management-system
-=======
-# AI-RFP-Management
->>>>>>> 239dae5d8dbf746d49b4504903524b2a4718d343
-=======
-# AI-RFP-Management-System
->>>>>>> 66eed66387271fe233ef94035c77b3b6c6dfad79
+cd AI-RFP-Manager
+
+### 2. Backend Setup
+
+cd backend
+
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Copy environment variables
+cp ../.env.example .env
+# Edit .env with your actual values
+
+### 3. Configure Environment Variables
+
+SECRET_KEY='your-secret-key'
+DEBUG=True
+EMAIL_HOST_USER='your-email@gmail.com'
+EMAIL_HOST_PASSWORD='your-app-password'
+OPENAI_API_KEY='your-openai-api-key'
+DEMO_MODE=True
+AI_DEMO_MODE=True
+
+### 4. Database Setup
+python manage.py migrate
+python manage.py createsuperuser  # Optional for admin panel
+python setup_demo_data.py        # Load demo vendors and RFP
+
+### 5. Frontend Setup
+cd ../frontend
+# No installation required - pure HTML/JS/CSS
+
+### 6. Run the Application
+
+# Terminal 1: Start Django backend
+cd backend
+python manage.py runserver
+
+### 📧 Email Configuration
+For Real Email Sending/Receiving:
+-Use a Gmail account with 2FA enabled
+-Generate an App Password from Google Account settings
+.Update .env with your credentials
+-Set DEMO_MODE=False in .env
+
+### Demo Mode (Recommended for Testing):
+Set DEMO_MODE=True in .env
+System creates fake proposals automatically
+No actual emails sent/received
+Perfect for development and demonstration
+
+
+
+
