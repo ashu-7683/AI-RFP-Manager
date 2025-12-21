@@ -152,16 +152,11 @@ EMAIL_SENDING_ENABLED = True
 EMAIL_RECEIVING_ENABLED = True
 # For real email sending 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = ''
-EMAIL_PORT = PORT NO
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email-@gmail.com'
-EMAIL_HOST_PASSWORD = 'your-app-pass-key'
-DEFAULT_FROM_EMAIL = 'your-email-@gmail.com'
+
 
 # For real email receiving (IMAP)
 EMAIL_IMAP_HOST = 'imap.gmail.com'
-EMAIL_IMAP_PORT = 993
+EMAIL_IMAP_PORT = PORT NO
 
 # System Modes
 DEMO_MODE = False  # When True, creates demo data instead of real emails
