@@ -96,12 +96,6 @@ For Real Email Sending/Receiving: <br>
 .Update .env with your credentials <br>
 -Set DEMO_MODE=False in .env <br>
 
-## Demo Mode (Recommended for Testing):
-Set DEMO_MODE=True in .env <br>
-System creates fake proposals automatically <br>
-No actual emails sent/received <br>
-Perfect for development and demonstration <br>
-
 
 
 
